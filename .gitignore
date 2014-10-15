@@ -15,3 +15,5 @@ bin
 out
 config/newrelic.json
 config/plugin.json
+*.swp
+*~

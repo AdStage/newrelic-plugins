@@ -19,7 +19,7 @@ public class CassandraHelper {
 			public List<String> execute(MBeanServerConnection connection) throws Exception {
 				List<String> ret = new ArrayList<String>();
 
-				Map m = JMXHelper.queryAndGetAttribute(connection, "org.apache.cassandra.db", null, "DynamicEndpointSnitch", null, "Scores");
+				Map m = JMXHelper.queryAndGetAttribute(connection, "org.apache.cassandra.net", null, "FailureDetector", null, "SimpleStates");
 
 				if (m != null) {
 					for (Object key : m.keySet()) {

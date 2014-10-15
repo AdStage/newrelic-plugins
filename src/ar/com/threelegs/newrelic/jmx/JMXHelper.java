@@ -17,23 +17,31 @@ import ar.com.threelegs.newrelic.Metric;
 
 import com.newrelic.metrics.publish.util.Logger;
 
+import java.util.concurrent.*;
+
 public class JMXHelper {
 	
 	private static final Logger LOGGER = Logger.getLogger(JMXHelper.class);
 	
 	public static <T> T run(String host, String port, JMXTemplate<T> template) throws ConnectionException {
-		JMXServiceURL address;
+		final JMXServiceURL address;
 		JMXConnector connector = null;
 		T value = null;
 
 		try {
-			address = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + host + ":" + port + "/jmxrmi");
-			try {
-				connector = JMXConnectorFactory.connect(address);
-			} catch (IOException ex) {
-				throw new ConnectionException(host, ex);
-			}
-			MBeanServerConnection mbs = connector.getMBeanServerConnection();
+      address = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + host + ":" + port + "/jmxrmi");
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      Future<JMXConnector> future = executor.submit(new Callable<JMXConnector>() {
+        public JMXConnector call() throws IOException {
+          try {
+            return JMXConnectorFactory.connect(address);
+          } catch (IOException e) {
+            throw e;
+          }
+        }
+      });
+      connector = future.get(1000, TimeUnit.MILLISECONDS);
+      MBeanServerConnection mbs = connector.getMBeanServerConnection();
 
 			value = template.execute(mbs);
 		} catch (ConnectionException e) {
