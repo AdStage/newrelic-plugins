@@ -154,6 +154,34 @@ public class CassandraRing extends Agent {
 							metrics.add(new Metric("Cassandra/global/Latency/99thWrites", "millis", wl99th));
 							metrics.add(new Metric("Cassandra/global/Latency/999thWrites", "millis", wl999th));
 
+              //Throughput
+
+							Integer rsActive = JMXHelper.queryAndGetAttribute(connection, "org.apache.cassandra.request", null, "ReadStage",
+									null, "ActiveCount");
+							Long rsCompleted = JMXHelper.queryAndGetAttribute(connection, "org.apache.cassandra.request", null, "ReadStage",
+									null, "CompletedTasks");
+							Long rsPending = JMXHelper.queryAndGetAttribute(connection, "org.apache.cassandra.request", null, "ReadStage",
+									null, "PendingTasks");
+							metrics.add(new Metric("Cassandra/hosts/" + host + "/Request/ReadStage/ActiveCount", "count", rsActive));
+							metrics.add(new Metric("Cassandra/hosts/" + host + "/Request/ReadStage/CompletedTasks", "count", rsCompleted));
+							metrics.add(new Metric("Cassandra/hosts/" + host + "/Request/ReadStage/PendingTasks", "count", rsPending));
+							metrics.add(new Metric("Cassandra/global/Request/ReadStage/ActiveCount", "count", rsActive));
+							metrics.add(new Metric("Cassandra/global/Request/ReadStage/CompletedTasks", "count", rsCompleted));
+							metrics.add(new Metric("Cassandra/global/Request/ReadStage/PendingTasks", "count", rsPending));
+
+							Integer msActive = JMXHelper.queryAndGetAttribute(connection, "org.apache.cassandra.request", null, "MutationStage",
+									null, "ActiveCount");
+							Long msCompleted = JMXHelper.queryAndGetAttribute(connection, "org.apache.cassandra.request", null, "MutationStage",
+									null, "CompletedTasks");
+							Long msPending = JMXHelper.queryAndGetAttribute(connection, "org.apache.cassandra.request", null, "MutationStage",
+									null, "PendingTasks");
+							metrics.add(new Metric("Cassandra/hosts/" + host + "/Request/MutationStage/ActiveCount", "count", msActive));
+							metrics.add(new Metric("Cassandra/hosts/" + host + "/Request/MutationStage/CompletedTasks", "count", msCompleted));
+							metrics.add(new Metric("Cassandra/hosts/" + host + "/Request/MutationStage/PendingTasks", "count", msPending));
+							metrics.add(new Metric("Cassandra/global/Request/MutationStage/ActiveCount", "count", msActive));
+							metrics.add(new Metric("Cassandra/global/Request/MutationStage/CompletedTasks", "count", msCompleted));
+							metrics.add(new Metric("Cassandra/global/Request/MutationStage/PendingTasks", "count", msPending));
+
 							// System
 							Integer cpt = JMXHelper.queryAndGetAttribute(connection,
 									JMXHelper.getObjectNameByKeys("org.apache.cassandra.metrics", "type=Compaction", "name=PendingTasks"), "Value");
