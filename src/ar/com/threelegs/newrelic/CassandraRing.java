@@ -190,6 +190,8 @@ public class CassandraRing extends Agent {
 
 							metrics.add(new Metric("Cassandra/hosts/" + host + "/Compaction/PendingTasks", "count", cpt));
 							metrics.add(new Metric("Cassandra/hosts/" + host + "/MemtableFlush/PendingTasks", "count", mpt));
+							metrics.add(new Metric("Cassandra/global/Compaction/PendingTasks", "count", cpt));
+							metrics.add(new Metric("Cassandra/global/MemtableFlush/PendingTasks", "count", mpt));
 
 							Integer dec = JMXHelper.queryAndGetAttribute(connection, JMXHelper.getObjectNameByKeys("org.apache.cassandra.net",
 									"type=FailureDetector"), "DownEndpointCount");
